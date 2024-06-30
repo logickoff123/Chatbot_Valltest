@@ -3,6 +3,13 @@ from telegram.ext import Updater, CommandHandler, ApplicationBuilder, MessageHan
 from generator_math import *
 from generator_phys import *
 import img_gen 
+from telegram import ReplyKeyboardMarkup, KeyboardButton
+
+# Создание бота
+app = ApplicationBuilder().token("7327645399:AAFDw1wUz2FPQ4QBDXSJZHlPt2ICWKnjIls").build() 
+
+async def start(update, context):
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Добро пожаловать! Выберите задание на прохождение", reply_markup=get_main_menu())
 
 # Функции для генерации вопросов
 # Математика:
@@ -143,8 +150,21 @@ async def handle_message(update, context):
         # Если сообщение не является ответом на вопрос, игнорируем его
         pass  
 
-# Создание бота
-app = ApplicationBuilder().token("7327645399:AAFDw1wUz2FPQ4QBDXSJZHlPt2ICWKnjIls").build() 
+# Функция для инициализации меню
+def get_main_menu():
+    buttons = [
+        [KeyboardButton('/matrix_2'), KeyboardButton('/matrix_3')],
+        [KeyboardButton('/div_urav'), KeyboardButton('/mult_urav')],
+        [KeyboardButton('/sub_urav'), KeyboardButton('/sum_urav')],
+        [KeyboardButton('/square_urav'), KeyboardButton('/triangle')],
+        [KeyboardButton('/power'), KeyboardButton('/work')],
+        [KeyboardButton('/current_strength'), KeyboardButton('/resistance')],
+        [KeyboardButton('/voltage'), KeyboardButton('/charges_amount')],
+        [KeyboardButton('/resistance_2'), KeyboardButton('/current_strength_2')],
+        [KeyboardButton('/inductance'), KeyboardButton('/resistance_3')]
+    ]
+    return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+
 # Добавление команд по математике
 app.add_handler(CommandHandler('matrix_2', matrix_2))
 app.add_handler(CommandHandler('matrix_3', matrix_3))
