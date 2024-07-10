@@ -1,9 +1,16 @@
-import os
-from telegram.ext import Updater, CommandHandler, ApplicationBuilder, MessageHandler, filters
+from telegram.ext import CommandHandler, ApplicationBuilder, MessageHandler, filters
 from generator_math import *
 from generator_phys import *
 import img_gen 
 from telegram import ReplyKeyboardMarkup, KeyboardButton
+
+from tqdm.auto import tqdm
+from haystack.nodes import QuestionGenerator, FARMReader
+from haystack.document_stores import ElasticsearchDocumentStore
+from haystack.pipelines import (
+    QuestionGenerationPipeline,
+    QuestionAnswerGenerationPipeline,
+)
 
 # Создание бота
 app = ApplicationBuilder().token("7327645399:AAFDw1wUz2FPQ4QBDXSJZHlPt2ICWKnjIls").build() 
@@ -12,7 +19,40 @@ async def start(update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Добро пожаловать! Выберите задание на прохождение", reply_markup=get_main_menu())
 
 # Функции для генерации вопросов
-# Математика:
+### Английский:
+def generate_QA(text):
+  docs = [{"content": text}]
+  document_store = ElasticsearchDocumentStore(
+     host="localhost",
+     port=9200)
+  document_store.delete_documents()
+  document_store.write_documents(docs)
+  question_generator = QuestionGenerator()
+  question_generation_pipeline = QuestionGenerationPipeline(question_generator)
+  reader = FARMReader("deepset/roberta-base-squad2")
+  qag_pipeline = QuestionAnswerGenerationPipeline(question_generator, reader)
+  for idx, document in enumerate(tqdm(document_store)):
+
+      print(f"\n * Generating questions and answers for document {idx}: {document.content[:100]}...\n")
+      result = qag_pipeline.run(documents=[document])
+      question_list = result["queries"]
+      answer_list = list(map(lambda x: x[0].answer, result["answers"]))
+      return  {
+          "questions": result["queries"],
+          "answers": list(map(lambda x: x[0].answer, result["answers"]))
+          }
+
+async def english_text(update, context):
+    text = "Nikola Tesla (Serbian Cyrillic: Никола Тесла; 10 July 1856 – 7 January 1943) was a Serbian American inventor, electrical engineer, mechanical engineer, physicist, and futurist best known for his contributions to the design of the modern alternating current (AC) electricity supply system."
+    question = generate_QA(text)
+
+    id = random.randint(0,len(question["questions"])-1)
+
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=question["questions"][id])
+    context.user_data["calc"] = question["answers"][id]
+
+### Математика:
 async def matrix_2(update, context):
     question = deter_gen_2()
     row_matrix = [[question["raw_data"][0],question["raw_data"][1]],[question["raw_data"][2],question["raw_data"][3]]]
@@ -77,7 +117,7 @@ async def square_urav(update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
     context.user_data["calc"] = question["calc"]
 
-# Физика:
+### Физика:
 async def power_question(update, context):
     question = power()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
@@ -165,6 +205,9 @@ def get_main_menu():
     ]
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
 
+# Добавление команд по английскому языку
+app.add_handler(CommandHandler('english_text', english_text))
+
 # Добавление команд по математике
 app.add_handler(CommandHandler('matrix_2', matrix_2))
 app.add_handler(CommandHandler('matrix_3', matrix_3))
@@ -174,6 +217,7 @@ app.add_handler(CommandHandler('sub_urav', sub_urav))
 app.add_handler(CommandHandler('sum_urav', sum_urav))
 app.add_handler(CommandHandler('square_urav', square_urav))
 app.add_handler(CommandHandler('triangle', triangle))
+
 # Добавление команд по физике
 app.add_handler(CommandHandler('power', power_question))
 app.add_handler(CommandHandler('work', work_question))
@@ -185,7 +229,9 @@ app.add_handler(CommandHandler('resistance_2', resistance_2_question))
 app.add_handler(CommandHandler('current_strength_2', curr_strength_2_question))
 app.add_handler(CommandHandler('inductance', inductance_question))
 app.add_handler(CommandHandler('resistance_3', resistance_3_question))
+
 # Добавление считывания ответов
-app.add_handler(MessageHandler(filters.ALL, handle_message)) 
+app.add_handler(MessageHandler(filters.ALL, handle_message))
+
 
 app.run_polling()
