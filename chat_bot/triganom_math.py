@@ -74,11 +74,6 @@ def trig_equation_cot_gen(SIZE=100):
     
     return {"raw_data": [a, b, c], "solutions": real_solutions}
 
-result = trig_equation_tan_gen()
-print(f"Уравнение: {result['raw_data'][0]}cos^2(x) + {result['raw_data'][1]}cos(x) + {result['raw_data'][2]} = 0")
-print(f"Решения: {result['solutions']}")
-
-
 def log_equation_gen(SIZE=100):
     a = random.randint(1, 10)
     b = random.randint(1, 10)
@@ -95,6 +90,12 @@ def log_equation_gen(SIZE=100):
     
     real_solutions = [s for s in solutions if np.isreal(s)]
     return {"raw_data": [a, b, c], "solutions": real_solutions}
+
+# Дебаг
+result = trig_equation_tan_gen()
+print(f"Уравнение: {result['raw_data'][0]}cos^2(x) + {result['raw_data'][1]}cos(x) + {result['raw_data'][2]} = 0")
+print(f"Решения: {result['solutions']}")
+
 #result = log_equation_gen()
 #print(f"Уравнение: log2(x^2 - {result['raw_data'][0]}x) = {result['raw_data'][1]}")
 #print(f"Решения: {result['solutions']}")

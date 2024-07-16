@@ -20,6 +20,7 @@ async def start(update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Добро пожаловать! Выберите задание на прохождение", reply_markup=get_main_menu())
 
 # Функции для генерации вопросов
+# TODO: добавить ведение статистики правильных ответов (добавить поля "total questions" и "correct answers" в user_context)
 ### Английский:
 def generate_QA(text):
   docs = [{"content": text}]
@@ -54,6 +55,9 @@ async def english_text(update, context):
     context.user_data["calc"] = question["answers"][id]
 
 ### Математика:
+# TODO: проверять на правильность введённых данных и обработку исключений
+# Причина: после введения команды /matrix_2 и вслед за ней команды /start бот считал команду /start как ответ на вопрос
+# и выдал ошибку, не проверив ответ до конца и не выставив оценку
 async def matrix_2(update, context):
     question = deter_gen_2()
     row_matrix = [[question["raw_data"][0],question["raw_data"][1]],[question["raw_data"][2],question["raw_data"][3]]]
@@ -117,7 +121,7 @@ async def square_urav(update, context):
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X. Если решений нет, напишите \"Нет решений\"")
     if question["calc"] == []:
-        question["calc"] = "Нет решений"
+        context.user_data["calc"] = "Нет решений"
     else:
         context.user_data["calc"] = question["calc"]
 
@@ -174,50 +178,49 @@ async def resistance_3_question(update, context):
 
 
 # Тригонометрия 
-async def trig_equation_cos_gen(update, context):
+async def trig_equation_cos_question(update, context):
     question = trig_equation_cos_gen()
     simple_urav = question["raw_data"]
     img_gen.gen_trigonom_eq_img(simple_urav,"cos","temp")
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
-    if question["calc"] == []:
-        question["calc"] = "Нет решений"
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X. Если решений нет, напишите \"Нет решений\"")
+    if question["solutions"] == []:
+        context.user_data["calc"] = "Нет решений"
     else:
         context.user_data["calc"] = question["solutions"]
 
-async def trig_equation_sin_gen(update, context):
+async def trig_equation_sin_question(update, context):
     question = trig_equation_sin_gen()
     simple_urav = question["raw_data"]
     img_gen.gen_trigonom_eq_img(simple_urav,"sin","temp")
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
-    if question["calc"] == []:
-        question["calc"] = "Нет решений"
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X. Если решений нет, напишите \"Нет решений\"")
+    if question["solutions"] == []:
+        context.user_data["calc"] = "Нет решений"
     else:
         context.user_data["calc"] = question["solutions"]
 
-async def trig_equation_tan_gen(update, context):
+async def trig_equation_tan_question(update, context):
     question = trig_equation_tan_gen()
     simple_urav = question["raw_data"]
     img_gen.gen_trigonom_eq_img(simple_urav,"tg","temp")
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
-    if question["calc"] == []:
-        question["calc"] = "Нет решений"
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X. Если решений нет, напишите \"Нет решений\"")
+    if question["solutions"] == []:
+        context.user_data["calc"] = "Нет решений"
     else:
         context.user_data["calc"] = question["solutions"]
 
-async def trig_equation_cot_gen(update, context):
+async def trig_equation_cot_question(update, context):
     question = trig_equation_cot_gen()
     simple_urav = question["raw_data"]
     img_gen.gen_trigonom_eq_img(simple_urav,"ctg","temp")
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
-    if question["calc"] == []:
-        question["calc"] = "Нет решений"
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X. Если решений нет, напишите \"Нет решений\"")
+    if question["solutions"] == []:
+        context.user_data["calc"] = "Нет решений"
     else:
         context.user_data["calc"] = question["solutions"]
-
 
 
 # Функция для обработки сообщений от пользователя
@@ -253,9 +256,15 @@ def get_main_menu():
         [KeyboardButton('/current_strength'), KeyboardButton('/resistance')],
         [KeyboardButton('/voltage'), KeyboardButton('/charges_amount')],
         [KeyboardButton('/resistance_2'), KeyboardButton('/current_strength_2')],
-        [KeyboardButton('/inductance'), KeyboardButton('/resistance_3')]
+        [KeyboardButton('/inductance'), KeyboardButton('/resistance_3')],
+        [KeyboardButton('/sin_urav'), KeyboardButton('/cos_urav')],
+        [KeyboardButton('/tg_urav'), KeyboardButton('/ctg_urav')],
+        
     ]
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
+
+# Добавление команды для старта и получения клавиатуры
+app.add_handler(CommandHandler('start', start))
 
 # Добавление команд по английскому языку
 app.add_handler(CommandHandler('english_text', english_text))
@@ -281,6 +290,12 @@ app.add_handler(CommandHandler('resistance_2', resistance_2_question))
 app.add_handler(CommandHandler('current_strength_2', curr_strength_2_question))
 app.add_handler(CommandHandler('inductance', inductance_question))
 app.add_handler(CommandHandler('resistance_3', resistance_3_question))
+
+# Добавление команд по тригонометрии
+app.add_handler(CommandHandler('sin_urav', trig_equation_sin_question))
+app.add_handler(CommandHandler('cos_urav', trig_equation_cos_question))
+app.add_handler(CommandHandler('tg_urav', trig_equation_tan_question))
+app.add_handler(CommandHandler('ctg_urav', trig_equation_cot_question))
 
 # Добавление считывания ответов
 app.add_handler(MessageHandler(filters.ALL, handle_message))

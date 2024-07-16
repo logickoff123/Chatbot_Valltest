@@ -39,7 +39,7 @@ def gen_trigonom_eq_img(args=[1,1,1], eq_type = "sin", name="Untitled"):
     # initialization
     fig = plt.figure()
     spl = fig.add_subplot(2,1,1)
-    spl.text(0.22,0.4,str(args[0])+f"{eq_type}²(x) + "+str(args[1])+f"{eq_type}(x) + "+str(args[2])+" = 0", fontsize=24)
+    spl.text(0.16,0.4,str(args[0])+f"{eq_type}²(x) + "+str(args[1])+f"{eq_type}(x) + "+str(args[2])+" = 0", fontsize=18)
     # saving the figure
     extent = spl.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
     fig.savefig("{a}.png".format(a=name), bbox_inches=extent)
