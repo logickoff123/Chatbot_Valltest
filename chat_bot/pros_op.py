@@ -1,6 +1,7 @@
 from telegram.ext import CommandHandler, ApplicationBuilder, MessageHandler, filters
 from generator_math import *
 from generator_phys import *
+from triganom_math import *
 import img_gen 
 from telegram import ReplyKeyboardMarkup, KeyboardButton
 
@@ -170,6 +171,54 @@ async def resistance_3_question(update, context):
     question = resistance_3()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+
+
+# Тригонометрия 
+async def trig_equation_cos_gen(update, context):
+    question = trig_equation_cos_gen()
+    simple_urav = question["raw_data"]
+    img_gen.gen_trigonom_eq_img(simple_urav,"cos","temp")
+    await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
+    if question["calc"] == []:
+        question["calc"] = "Нет решений"
+    else:
+        context.user_data["calc"] = question["solutions"]
+
+async def trig_equation_sin_gen(update, context):
+    question = trig_equation_sin_gen()
+    simple_urav = question["raw_data"]
+    img_gen.gen_trigonom_eq_img(simple_urav,"sin","temp")
+    await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
+    if question["calc"] == []:
+        question["calc"] = "Нет решений"
+    else:
+        context.user_data["calc"] = question["solutions"]
+
+async def trig_equation_tan_gen(update, context):
+    question = trig_equation_tan_gen()
+    simple_urav = question["raw_data"]
+    img_gen.gen_trigonom_eq_img(simple_urav,"tg","temp")
+    await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
+    if question["calc"] == []:
+        question["calc"] = "Нет решений"
+    else:
+        context.user_data["calc"] = question["solutions"]
+
+async def trig_equation_cot_gen(update, context):
+    question = trig_equation_cot_gen()
+    simple_urav = question["raw_data"]
+    img_gen.gen_trigonom_eq_img(simple_urav,"ctg","temp")
+    await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
+    if question["calc"] == []:
+        question["calc"] = "Нет решений"
+    else:
+        context.user_data["calc"] = question["solutions"]
+
+
 
 # Функция для обработки сообщений от пользователя
 async def handle_message(update, context):
