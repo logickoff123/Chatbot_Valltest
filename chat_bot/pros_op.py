@@ -114,8 +114,11 @@ async def square_urav(update, context):
     simple_urav = question["raw_data"]
     img_gen.gen_simple_eq_img(simple_urav,"+","temp")
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
-    context.user_data["calc"] = question["calc"]
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X. Если решений нет, напишите \"Нет решений\"")
+    if question["calc"] == []:
+        question["calc"] = "Нет решений"
+    else:
+        context.user_data["calc"] = question["calc"]
 
 ### Физика:
 async def power_question(update, context):

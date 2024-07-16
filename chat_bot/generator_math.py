@@ -111,8 +111,8 @@ def square_equasion_gen(SIZE=100):
         #img_name="14"+img_name
         #gen_square_eq_img(res["raw_data"], "img/{a}".format(a=str(img_name)))
     else:
+        res["calc"]= []
         # continue
-        pass
     return res
 
 def cosine_theorem_gen(SIZE=100):
