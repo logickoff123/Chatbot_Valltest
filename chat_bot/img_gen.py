@@ -22,6 +22,18 @@ def gen_simple_eq_img(args=[1,1], type="?", name="Untitled"):
     # closing the figure to save some memory
     plt.close()
 
+def gen_log_eq_img(args=[1,1,1], name="Untitled"):
+    # initialization
+    fig = plt.figure()
+    spl = fig.add_subplot(2,1,1)
+    spl.text(0.22,0.4,f"log₂(x² + {args[0]}x) - {args[1]} = {args[2]}", fontsize=24)
+    # saving the figure
+    extent = spl.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+    fig.savefig("{a}.png".format(a=name), bbox_inches=extent)
+    pass
+    # closing the figure to save some memory
+    plt.close()
+
 def gen_square_eq_img(args=[1,1,1], name="Untitled"):
     # initialization
     fig = plt.figure()
@@ -32,8 +44,7 @@ def gen_square_eq_img(args=[1,1,1], name="Untitled"):
     fig.savefig("{a}.png".format(a=name), bbox_inches=extent)
     pass
     # closing the figure to save some memory
-    plt.close()
-    
+    plt.close()  
     
 def gen_trigonom_eq_img(args=[1,1,1], eq_type = "sin", name="Untitled"):
     # initialization

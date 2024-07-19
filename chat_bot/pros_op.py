@@ -17,10 +17,12 @@ from haystack.pipelines import (
 app = ApplicationBuilder().token("7327645399:AAFDw1wUz2FPQ4QBDXSJZHlPt2ICWKnjIls").build() 
 
 async def start(update, context):
+    context.user_data["questions_took"] = 0
+    context.user_data["correct_answers"] = 0
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Добро пожаловать! Выберите задание на прохождение", reply_markup=get_main_menu())
 
 # Функции для генерации вопросов
-# TODO: добавить ведение статистики правильных ответов (добавить поля "total questions" и "correct answers" в user_context)
+# TODO: добавить чтение статистики пользователя (добавить поля "total questions" и "correct answers" в user_context)
 ### Английский:
 def generate_QA(text):
   docs = [{"content": text}]
@@ -53,6 +55,10 @@ async def english_text(update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["questions"][id])
     context.user_data["calc"] = question["answers"][id]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] = 1
 
 ### Математика:
 # TODO: проверять на правильность введённых данных и обработку исключений
@@ -65,6 +71,10 @@ async def matrix_2(update, context):
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите детерменант матрицы второго порядка")
     context.user_data["calc"] = question["calc"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] = 1
 
 async def matrix_3(update, context):
     question = deter_gen_3()
@@ -73,6 +83,10 @@ async def matrix_3(update, context):
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите детерменант матрицы третьего порядка")
     context.user_data["calc"] = question["calc"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def div_urav(update, context):
     question = simple_div_equation_gen()
@@ -81,6 +95,10 @@ async def div_urav(update, context):
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
     context.user_data["calc"] = question["calc"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
     
 async def mult_urav(update, context):
     question = simple_mult_equation_gen()
@@ -89,6 +107,10 @@ async def mult_urav(update, context):
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
     context.user_data["calc"] = question["calc"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def sub_urav(update, context):
     question = simple_sub_equation_gen()
@@ -97,6 +119,10 @@ async def sub_urav(update, context):
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
     context.user_data["calc"] = question["calc"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def sum_urav(update, context):
     question = simple_sum_equation_gen()
@@ -105,6 +131,10 @@ async def sum_urav(update, context):
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
     context.user_data["calc"] = question["calc"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def triangle(update, context):
     question = triangle_S_gen()
@@ -113,6 +143,10 @@ async def triangle(update, context):
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X")
     context.user_data["calc"] = question["calc"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def square_urav(update, context):
     question = square_equasion_gen()
@@ -124,57 +158,101 @@ async def square_urav(update, context):
         context.user_data["calc"] = "Нет решений"
     else:
         context.user_data["calc"] = question["calc"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 ### Физика:
 async def power_question(update, context):
     question = power()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def work_question(update, context):
     question = work()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def curr_strength_question(update, context):
     question = current_strength()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def resistance_question(update, context):
     question = resistance()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def voltage_question(update, context):
     question = voltage()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def charges_amount_question(update, context):
     question = charges_amount()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def resistance_2_question(update, context):
     question = resistance_2()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def curr_strength_2_question(update, context):
     question = current_strength_2()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def inductance_question(update, context):
     question = inductance()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 async def resistance_3_question(update, context):
     question = resistance_3()
     await context.bot.send_message(chat_id=update.effective_chat.id, text=question["text"])
     context.user_data["calc"] = question["ans"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] =1
 
 
 # Тригонометрия 
@@ -188,6 +266,10 @@ async def trig_equation_cos_question(update, context):
         context.user_data["calc"] = "Нет решений"
     else:
         context.user_data["calc"] = question["solutions"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] = 1
 
 async def trig_equation_sin_question(update, context):
     question = trig_equation_sin_gen()
@@ -199,6 +281,10 @@ async def trig_equation_sin_question(update, context):
         context.user_data["calc"] = "Нет решений"
     else:
         context.user_data["calc"] = question["solutions"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] = 1
 
 async def trig_equation_tan_question(update, context):
     question = trig_equation_tan_gen()
@@ -210,6 +296,10 @@ async def trig_equation_tan_question(update, context):
         context.user_data["calc"] = "Нет решений"
     else:
         context.user_data["calc"] = question["solutions"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] = 1
 
 async def trig_equation_cot_question(update, context):
     question = trig_equation_cot_gen()
@@ -221,7 +311,25 @@ async def trig_equation_cot_question(update, context):
         context.user_data["calc"] = "Нет решений"
     else:
         context.user_data["calc"] = question["solutions"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] = 1
 
+async def log_equation_question(update, context):
+    question = log_equation_gen()
+    simple_urav = question["raw_data"]
+    img_gen.gen_log_eq_img(simple_urav,"ctg","temp")
+    await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X. Если решений нет, напишите \"Нет решений\"")
+    if question["solutions"] == []:
+        context.user_data["calc"] = "Нет решений"
+    else:
+        context.user_data["calc"] = question["solutions"]
+    if context.user_data["questions_took"]:
+        context.user_data["questions_took"] += 1
+    else:
+        context.user_data["questions_took"] = 1
 
 # Функция для обработки сообщений от пользователя
 async def handle_message(update, context):
@@ -236,6 +344,10 @@ async def handle_message(update, context):
         # Сравниваем ответ пользователя с правильным ответом
         if int(user_message) == correct_answer:
             await context.bot.send_message(chat_id=update.effective_chat.id, text="Правильно!")
+            if context.user_data["correct_answers"]:
+                context.user_data["correct_answers"] += 1
+            else:
+                context.user_data["correct_answers"] = 1
         else:
             await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Неправильно. Правильный ответ: {correct_answer}")
         
