@@ -319,7 +319,7 @@ async def trig_equation_cot_question(update, context):
 async def log_equation_question(update, context):
     question = log_equation_gen()
     simple_urav = question["raw_data"]
-    img_gen.gen_log_eq_img(simple_urav,"ctg","temp")
+    img_gen.gen_log_eq_img(simple_urav,"temp")
     await context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('temp.png', 'rb'))
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Найдите X. Если решений нет, напишите \"Нет решений\"")
     if question["solutions"] == []:
