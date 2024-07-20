@@ -371,6 +371,7 @@ def get_main_menu():
         [KeyboardButton('/inductance'), KeyboardButton('/resistance_3')],
         [KeyboardButton('/sin_urav'), KeyboardButton('/cos_urav')],
         [KeyboardButton('/tg_urav'), KeyboardButton('/ctg_urav')],
+        [KeyboardButton('/log_urav'), KeyboardButton('/english_text')],
         
     ]
     return ReplyKeyboardMarkup(buttons, resize_keyboard=True)
@@ -408,6 +409,7 @@ app.add_handler(CommandHandler('sin_urav', trig_equation_sin_question))
 app.add_handler(CommandHandler('cos_urav', trig_equation_cos_question))
 app.add_handler(CommandHandler('tg_urav', trig_equation_tan_question))
 app.add_handler(CommandHandler('ctg_urav', trig_equation_cot_question))
+app.add_handler(CommandHandler('log_urav', log_equation_question))
 
 # Добавление считывания ответов
 app.add_handler(MessageHandler(filters.ALL, handle_message))
